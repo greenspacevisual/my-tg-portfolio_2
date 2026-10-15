@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Студия Разработки</title>
+    <!-- Официальный скрипт Telegram WebApp API -->
+    <script src="https://telegram.org"></script>
+    <style>
+        :root {
+            --bg-color: #0b141a;
+            --card-bg: #111c24;
+            --text-color: #ffffff;
+            --text-muted: #8696a0;
+            --accent-green: #00a884;
+            --accent-light-green: #00e676;
+            --border-color: #222e35;
+            --gradient-btn: linear-gradient(90deg, #00ffd8 0%, #00e676 100%);
+            --input-bg: #2a3942;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Анимация плавного переключения экранов */
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ГЛАВНЫЙ ЭКРАН (Дизайн 1 в 1 со скриншота) --- */
+        .header {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 24px;
+        }
+
+        .avatar-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #00ffd8 0%, #00e676 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.3);
+        }
+
+        .avatar-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #fdd835;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 auto;
+            max-width: 280px;
+            line-height: 1.4;
+        }
+
+        .section-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #00ffd8;
+            margin: 32px 0 16px 4px;
+            font-weight: 600;
+        }
+
+        /* Карточки наших услуг */
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-price {
+            font-size: 15px;
+            color: var(--accent-light-green);
+            margin-bottom: 14px;
+            padding-left: 28px;
+        }
+
+        .btn-action {
+            display: block;
+            width: 100%;
+            background: var(--gradient-btn);
+            color: #0b141a;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: opacity 0.1s ease;
+        }
+
+        .btn-action:active {
+            opacity: 0.85;
+        }
+
+        /* --- ЭКРАН ВТОРОЙ: ИНТЕРАКТИВНАЯ ФОРМА ЗАКАЗА --- */
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: #00ffd8;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        textarea {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #00ffd8;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .selected-service-badge {
+            background-color: rgba(0, 255, 216, 0.1);
+            border: 1px solid rgba(0, 255, 216, 0.3);
+            color: #00ffd8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= СТРАНИЦА 1: ГЛАВНАЯ ================= -->
+    <div id="main-page" class="page active">
+        <div class="header">
+            <div class="avatar-container">
+                <div class="avatar-img">👨‍💻</div>
+            </div>
+            <h1>Студия Разработки</h1>
+            <p class="subtitle">Создание современных Telegram ботов & Web Apps под ключ</p>
+        </div>
+
+        <div class="section-title">Наши услуги и цены</div>
+
+        <div class="services-list">
+            <!-- Карточка 1 -->
+            <div class="card">
+                <div class="card-header">🤖 Бот-визитка / Меню услуг</div>
+                <div class="card-price">от 5 000 руб</div>
+                <button class="btn-action" onclick="openBrief('Бот-визитка / Меню услуг (от 5000р)')">Выбрать и заказать</button>
+            </div>
+
+            <!-- Карточка 2 -->
+            <div class="card">
+                <div class="card-header">📊 Бот с Базой Данных / CRM воронка</div>
+                <div class="card-price">от 12 000 руб</div>
+                <button class="btn-action" onclick="openBrief('Бот с Базой Данных / CRM воронка (от 12000р)')">Выбрать и заказать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= СТРАНИЦА 2: ФОРМА ЗАКАЗА ================= -->
+    <div id="brief-page" class="page">
+        <div class="form-header">
+            <button class="btn-back" onclick="navigateBack()">←</button>
+            <h2 class="form-title">Заполнение брифа</h2>
+        </div>
+
+        <div id="service-badge" class="selected-service-badge"></div>
+
+        <div class="form-group">
+            <label for="project-name">Название вашего проекта / бизнеса</label>
+            <input type="text" id="project-name" placeholder="Например: Доставка пиццы 'Вкусный Рим'">
+        </div>
+
+        <div class="form-group">
+            <label for="project-task">Что конкретно должен делать бот? (ТЗ)</label>
+            <textarea id="project-task" placeholder="Опишите основные функции, кнопки, логику работы..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="project-budget">Желаемая сумма / Бюджет (руб)</label>
+            <input type="number" id="project-budget" placeholder="Например: 15000">
+        </div>
+
+        <div class="form-group">
+            <label for="project-wishes">Дополнительные пожелания или сроки</label>
+            <textarea id="project-wishes" placeholder="Срочно за 3 дня / Нужен строгий дизайн / Нет предпочтений"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="project-phone">Номер телефона для связи (необязательно)</label>
+            <input type="text" id="project-phone" placeholder="+7 (999) 000-00-00">
+        </div>
+
+        <button class="btn-action" style="margin-top: 10px; margin-bottom: 30px;" onclick="submitBrief()">Отправить заказ разработчику</button>
+    </div>
+    <script>
+        // Инициализируем Telegram WebApp API
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand(); // Открываем приложение во весь экран на телефоне
+
+        let currentSelectedService = "";
+
+        // Навигация: открываем экран формы с брифуемой услугой
+        function openBrief(serviceName) {
+            currentSelectedService = serviceName;
+            document.getElementById('service-badge').innerText = `Выбрано: ${serviceName}`;
+            
+            // Скрываем главную страницу и показываем форму заказа
+            document.getElementById('main-page').classList.remove('active');
+            document.getElementById('brief-page').classList.add('active');
+            window.scrollTo(0, 0); // Прокручиваем наверх для удобства
+        }
+
+        // Навигация: возвращаемся назад на главный экран каталога
+        function navigateBack() {
+            document.getElementById('brief-page').classList.remove('active');
+            document.getElementById('main-page').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // Сбор заполненных полей и отправка данных в бота
+        function submitBrief() {
+            const projectName = document.getElementById('project-name').value.trim();
+            const projectTask = document.getElementById('project-task').value.trim();
+            const projectBudget = document.getElementById('project-budget').value.trim();
+            const projectWishes = document.getElementById('project-wishes').value.trim();
+            const projectPhone = document.getElementById('project-phone').value.trim();
+
+            // Валидация: проверяем, заполнена ли суть проекта
+            if (!projectTask) {
+                alert("Пожалуйста, опишите в поле ТЗ, что конкретно должен делать ваш бот!");
+                return;
+            }
+
+            // Упаковываем всю анкету в единый объект для бэкенда
+            const orderData = {
+                type: "web_app_order", // Маркер, чтобы питон-скрипт понял тип данных
+                service: currentSelectedService,
+                title: projectName || "Не указано",
+                task: projectTask,
+                budget: projectBudget ? `${projectBudget} руб` : "Не указан",
+                wishes: projectWishes || "Нет",
+                phone: projectPhone || "Не указан"
+            };
+
+            // Отправляем JSON-строку обратно боту в чат и закрываем окно
+            tg.sendData(JSON.stringify(orderData));
+        }
+    </script>
+</body>
+</html>
