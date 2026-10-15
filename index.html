@@ -291,48 +291,53 @@
         <button class="btn-action" style="margin-top: 10px; margin-bottom: 30px;" onclick="submitBrief()">Отправить заказ разработчику</button>
     </div>
     <script>
-        // Инициализируем Telegram WebApp API
         const tg = window.Telegram.WebApp;
         tg.ready();
-        tg.expand(); // Открываем приложение во весь экран на телефоне
+        tg.expand();
 
         let currentSelectedService = "";
 
-        // Навигация: открываем экран формы с брифуемой услугой
+        // Навигация: открываем форму
         function openBrief(serviceName) {
             currentSelectedService = serviceName;
             document.getElementById('service-badge').innerText = `Выбрано: ${serviceName}`;
             
-            // Скрываем главную страницу и показываем форму заказа
             document.getElementById('main-page').classList.remove('active');
             document.getElementById('brief-page').classList.add('active');
-            window.scrollTo(0, 0); // Прокручиваем наверх для удобства
+            window.scrollTo(0, 0);
+
+            // Настраиваем и показываем Главную Кнопку Telegram внизу экрана
+            tg.MainButton.text = "ОТПРАВИТЬ ЗАКАЗ";
+            tg.MainButton.textColor = "#0b141a";
+            tg.MainButton.color = "#00e676";
+            tg.MainButton.show();
         }
 
-        // Навигация: возвращаемся назад на главный экран каталога
+        // Возврат назад
         function navigateBack() {
             document.getElementById('brief-page').classList.remove('active');
             document.getElementById('main-page').classList.add('active');
             window.scrollTo(0, 0);
+            
+            // Прячем кнопку Telegram, так как мы вернулись на главный экран
+            tg.MainButton.hide();
         }
 
-        // Сбор заполненных полей и отправка данных в бота
-        function submitBrief() {
+        // Вешаем отправку формы на клик по родной кнопке Telegram
+        tg.onEvent('mainButtonClicked', function() {
             const projectName = document.getElementById('project-name').value.trim();
             const projectTask = document.getElementById('project-task').value.trim();
             const projectBudget = document.getElementById('project-budget').value.trim();
             const projectWishes = document.getElementById('project-wishes').value.trim();
             const projectPhone = document.getElementById('project-phone').value.trim();
 
-            // Валидация: проверяем, заполнена ли суть проекта
             if (!projectTask) {
                 alert("Пожалуйста, опишите в поле ТЗ, что конкретно должен делать ваш бот!");
                 return;
             }
 
-            // Упаковываем всю анкету в единый объект для бэкенда
             const orderData = {
-                type: "web_app_order", // Маркер, чтобы питон-скрипт понял тип данных
+                type: "web_app_order",
                 service: currentSelectedService,
                 title: projectName || "Не указано",
                 task: projectTask,
@@ -341,9 +346,10 @@
                 phone: projectPhone || "Не указан"
             };
 
-            // Отправляем JSON-строку обратно боту в чат и закрываем окно
+            // Отправляем данные
             tg.sendData(JSON.stringify(orderData));
-        }
+        });
     </script>
 </body>
 </html>
+
